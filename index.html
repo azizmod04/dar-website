@@ -456,31 +456,27 @@
       <p class="section-sub lang-ar" style="text-align:center;margin:0 auto 36px;">كن من أوائل من يجرب دار. نحن في مرحلة الاختبار. انضم لقائمة الانتظار وساعد في تشكيل مستقبل التجارب الحسية.</p>
 
       <div class="form-box">
-        <form name="waitlist" method="POST" data-netlify="true" action="/thank-you.html">
+        <form id="darForm" name="waitlist" method="POST" data-netlify="true" action="/thank-you.html">
           <input type="hidden" name="form-name" value="waitlist" />
 
           <div class="form-group">
-            <label class="lang-en">Name</label><label class="lang-ar">الاسم</label>
-            <input type="text" name="name" required class="lang-en" placeholder="Your name" />
-            <input type="text" name="name" required class="lang-ar" placeholder="اسمك" />
+            <label data-en="Name" data-ar="الاسم">Name</label>
+            <input type="text" name="name" required id="input-name" placeholder="Your name" />
           </div>
 
           <div class="form-group">
-            <label class="lang-en">Email</label><label class="lang-ar">البريد الإلكتروني</label>
-            <input type="email" name="email" required class="lang-en" placeholder="your@email.com" />
-            <input type="email" name="email" required class="lang-ar" placeholder="بريدك@example.com" />
+            <label data-en="Email" data-ar="البريد الإلكتروني">Email</label>
+            <input type="email" name="email" required id="input-email" placeholder="your@email.com" />
           </div>
 
           <div class="form-group">
-            <label class="lang-en">City</label><label class="lang-ar">المدينة</label>
-            <input type="text" name="city" class="lang-en" placeholder="Riyadh, Jeddah, ..." />
-            <input type="text" name="city" class="lang-ar" placeholder="الرياض، جدة، ..." />
+            <label data-en="City" data-ar="المدينة">City</label>
+            <input type="text" name="city" id="input-city" placeholder="Riyadh, Jeddah, ..." />
           </div>
 
           <div class="form-group">
-            <label class="lang-en">Company / Organization</label><label class="lang-ar">الشركة / المؤسسة</label>
-            <input type="text" name="company" class="lang-en" placeholder="e.g. Café name, hotel group, gallery" />
-            <input type="text" name="company" class="lang-ar" placeholder="مثل: اسم المقهى، مجموعة فنادق، معرض" />
+            <label data-en="Company / Organization" data-ar="الشركة / المؤسسة">Company / Organization</label>
+            <input type="text" name="company" id="input-company" placeholder="e.g. Café name, hotel group, gallery" />
           </div>
 
           <div class="form-group">
@@ -576,10 +572,26 @@
     // Language
     const toggle = document.getElementById('langToggle');
     const opts = toggle.querySelectorAll('[data-lang]');
+    const enPlaces = { name:'Your name', email:'your@email.com', city:'Riyadh, Jeddah, ...', company:'e.g. Café name, hotel group, gallery' };
+    const arPlaces = { name:'اسمك', email:'بريدك@example.com', city:'الرياض، جدة، ...', company:'مثل: اسم المقهى، مجموعة فنادق، معرض' };
+
     function setLang(l) {
-      document.body.toggleAttribute('dir', l === 'ar');
+      const isAr = l === 'ar';
+      document.body.toggleAttribute('dir', isAr);
       opts.forEach(el => el.classList.toggle('active', el.dataset.lang === l));
       localStorage.setItem('dar-lang', l);
+
+      // Update labels
+      document.querySelectorAll('[data-en][data-ar]').forEach(el => {
+        el.textContent = isAr ? el.dataset.ar : el.dataset.en;
+      });
+
+      // Update placeholders
+      const p = isAr ? arPlaces : enPlaces;
+      Object.keys(p).forEach(k => {
+        const inp = document.getElementById('input-' + k);
+        if (inp) inp.placeholder = p[k];
+      });
     }
     setLang(localStorage.getItem('dar-lang') || 'en');
     toggle.addEventListener('click', () => setLang(document.body.hasAttribute('dir') ? 'en' : 'ar'));
