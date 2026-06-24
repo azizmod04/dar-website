@@ -605,7 +605,25 @@
       lastY = y;
     });
 
-    // Counter — increment on form submit (works with Netlify AJAX)
+    // Google Sheets — send to Apps Script on submit
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSeiJP3BBUzYNo4IYmBUlWNPzEclF1B5FhuDgORRdq4kjH4FWX1wecEFjyhyhuZ767JA/exec';
+    document.getElementById('darForm').addEventListener('submit', (e) => {
+      // Build JSON payload from form
+      const data = new FormData(e.target);
+      const payload = {};
+      for (const [key, val] of data.entries()) {
+        if (key === 'form-name') continue;
+        if (key in payload) {
+          payload[key] = [].concat(payload[key], val);
+        } else {
+          payload[key] = val;
+        }
+      }
+      // Fire to Google Sheets (won't block navigation)
+      navigator.sendBeacon(APPS_SCRIPT_URL, JSON.stringify(payload));
+    });
+
+    // Counter — increment on form submit
     let count = 31;
     const el = document.getElementById('count');
     document.getElementById('darForm').addEventListener('submit', () => {
