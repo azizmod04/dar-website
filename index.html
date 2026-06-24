@@ -577,7 +577,7 @@
 
     function setLang(l) {
       const isAr = l === 'ar';
-      document.body.toggleAttribute('dir', isAr);
+      if (isAr) { document.body.setAttribute('dir', 'rtl'); } else { document.body.removeAttribute('dir'); }
       opts.forEach(el => el.classList.toggle('active', el.dataset.lang === l));
       localStorage.setItem('dar-lang', l);
 
@@ -594,7 +594,7 @@
       });
     }
     setLang(localStorage.getItem('dar-lang') || 'en');
-    toggle.addEventListener('click', () => setLang(document.body.hasAttribute('dir') ? 'en' : 'ar'));
+    toggle.addEventListener('click', () => setLang(document.body.getAttribute('dir') === 'rtl' ? 'en' : 'ar'));
 
     // Top bar hide on scroll
     let lastY = 0;
